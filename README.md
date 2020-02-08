@@ -64,7 +64,6 @@ Or create a package.json script:
         "start": "node app.js",
         "build": "braze"
     }
-    ...
 }
 ```
 

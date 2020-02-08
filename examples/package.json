@@ -1,0 +1,9 @@
+{
+    "name": "braze-example",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "braze"
+    },
+    "author": "Jake Cyr",
+    "license": "ISC"
+}

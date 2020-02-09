@@ -27,13 +27,15 @@ exports.writeFile = (filePath, contents) => {
  * @param {string} distPath
  */
 exports.sourceToDistPath = (filePath, sourcePath, distPath) => {
+
+    console.log(filePath, sourcePath,distPath )
     const basePath = filePath
         .replace(sourcePath, distPath)
         .split('/')
         .filter(part => part !== '' && part !== '.')
         .join('/');
 
-    return distPath + '/' + basePath;
+    return basePath;
 };
 
 exports.findFiles = (searchExpression) => {

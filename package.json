@@ -1,6 +1,6 @@
 {
     "name": "braze",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Static site generator with the ability to re-use common HTML components throughout your pages",
     "main": "app.js",
     "scripts": {

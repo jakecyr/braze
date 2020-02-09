@@ -70,7 +70,7 @@ function compileFile(config, filePath, componentContext) {
         let fileContents = await (config.minifyOutput ? minify : loadFile)(filePath);
         const template = compile(fileContents, { noEscape: true });
         const compiledHtml = template(componentContext);
-        const newPath = sourceToDistPath(filePath, config.componentsDir, config.outputDir);
+        const newPath = sourceToDistPath(filePath, config.pagesDir, config.outputDir);
         const endDir = newPath.substring(0, newPath.lastIndexOf('/'));
 
         exists(endDir, async (exists) => {

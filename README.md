@@ -26,7 +26,7 @@ Make sure the `braze.json` file is in your project root.
 
 Example braze.json file: 
 
-```json
+```javascript
 {
     // Static HTML files that use your components
     "pagesDir": "./pages",

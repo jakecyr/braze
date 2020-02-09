@@ -1,5 +1,8 @@
 {
     "pagesDir": "./pages",
     "outputDir": "./dist",
-    "componentsDir": "./components"
+    "componentsDir": "./components",
+    "props": {
+        "name": "jake"
+    }
 }

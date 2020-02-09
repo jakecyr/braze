@@ -40,9 +40,14 @@ function generateStaticFiles(config) {
         const components = await loadComponents(config.componentsDir);
         const htmlFiles = await findFiles(config.pagesDir + '/**/*.html');
 
+        const context = {
+            ...(components || {}),
+            ...(config.props || {}),
+        };
+
         await setupOutputDirs(config.outputDir, true);
 
-        const promises = htmlFiles.map((file) => compileFile(config, file, components));
+        const promises = htmlFiles.map((file) => compileFile(config, file, context));
 
         Promise
             .all(promises)

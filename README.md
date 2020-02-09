@@ -36,8 +36,13 @@ Example braze.json file:
     // Directory to output compiled files to
     "outputDir": "./dist",
 
-    // Location of your .html component files
-    "componentsDir": "./components"
+    // Location of your .html component files (optional)
+    "componentsDir": "./components",
+
+    // optional additonal properties to use in context when compiling
+    "props": {
+        "appTitle": "The best app"
+    }
 }
 ```
 
@@ -51,11 +56,11 @@ To use a define component use handlebars syntax like so:
 
 Where the string used between the `{{}}` is the base file name. For example the component file name `navigation.html` will available as `navigation`.
 
-When ready to compile your pages with the components run the braze command:
+When ready to compile your pages with the components run the braze command (if installed globally):
 
 `braze`
 
-Or create a package.json script:
+Or create a package.json script (if installed at project level):
 
 ```json
 {

@@ -42,7 +42,10 @@ Example braze.json file:
     // optional additonal properties to use in context when compiling
     "props": {
         "appTitle": "The best app"
-    }
+    },
+
+    // if you want the output to be minified or not
+    "minifyOutput": true
 }
 ```
 

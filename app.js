@@ -2,6 +2,7 @@
 
 const { compile } = require('handlebars');
 const { exists } = require('fs');
+const minify = require('minify');
 
 const {
     loadFile,
@@ -64,30 +65,27 @@ function generateStaticFiles(config) {
  */
 function compileFile(config, filePath, componentContext) {
     return new Promise(async (resolve, reject) => {
-        loadFile(filePath)
-            .then((fileContents) => {
-                const template = compile(fileContents, { noEscape: true });
-                const compiledHtml = template(componentContext);
-                const newPath = sourceToDistPath(filePath, config.componentsDir, config.outputDir);
-                const endDir = newPath.substring(0, newPath.lastIndexOf('/'));
+        let fileContents = await (config.minifyOutput ? minify : loadFile)(filePath);
+        const template = compile(fileContents, { noEscape: true });
+        const compiledHtml = template(componentContext);
+        const newPath = sourceToDistPath(filePath, config.componentsDir, config.outputDir);
+        const endDir = newPath.substring(0, newPath.lastIndexOf('/'));
 
-                exists(endDir, async (exists) => {
-                    let promise = null;
+        exists(endDir, async (exists) => {
+            let promise = null;
 
-                    if (!exists) {
-                        promise = setupOutputDirs(endDir, false);
-                    } else {
-                        promise = Promise.resolve();
-                    }
+            if (!exists) {
+                promise = setupOutputDirs(endDir, false);
+            } else {
+                promise = Promise.resolve();
+            }
 
-                    await promise;
+            await promise;
 
-                    writeFile(newPath, compiledHtml)
-                        .then(resolve)
-                        .catch(reject);
-                })
-            })
-            .catch(reject);
+            writeFile(newPath, compiledHtml)
+                .then(resolve)
+                .catch(reject);
+        });
     });
 }
 

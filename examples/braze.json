@@ -3,6 +3,7 @@
     "outputDir": "./dist",
     "componentsDir": "./components",
     "props": {
-        "name": "jake"
-    }
+        "appName": "Braze App"
+    },
+    "minifyOutput": true
 }

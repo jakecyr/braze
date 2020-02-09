@@ -1,4 +1,4 @@
-![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.1.1&x2=0)
+![NPM Version](https://badge.fury.io/js/braze.svg)
 
 # Braze
 

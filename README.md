@@ -22,6 +22,8 @@ Run the command:
 
 ## Usage
 
+### Configuration File
+
 Start by creating a configuration file to tell braze where your components and HTML pages are.
 
 Make sure the `braze.json` file is in your project root.
@@ -49,15 +51,38 @@ Example braze.json file:
 }
 ```
 
+### Components
+
 To use a define component use handlebars syntax like so:
 
 ```html
 {{ navigation }}
-
 {{ header }}
 ```
 
 Where the string used between the `{{}}` is the base file name. For example the component file name `navigation.html` will available as `navigation`.
+
+Components support all [Handlebars](https://handlebarsjs.com/guide) syntax including loops. For example:
+
+**braze.json**
+```javascript
+{
+    "props": {
+        "people": ["Sam", "John", "Alex"]
+    }
+}
+```
+
+**component HTML file**
+```html
+<ul>
+    {{#each people}}
+        <li>{{this}}</li>
+    {{/each}}
+</ul>
+```
+
+### Building
 
 When ready to compile your pages with the components run the braze command (if installed globally):
 

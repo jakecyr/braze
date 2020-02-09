@@ -1,14 +1,5 @@
 {
     "pagesDir": "./pages",
     "outputDir": "./dist",
-    "components": [
-        {
-            "name": "navigation",
-            "path": "./components/navigation.html"
-        },
-        {
-            "name": "header",
-            "path": "./components/header.html"
-        }
-    ]
+    "componentsDir": "./components"
 }

@@ -28,18 +28,14 @@ Example braze.json file:
 
 ```json
 {
+    // Static HTML files that use your components
     "pagesDir": "./pages",
+
+    // Directory to output compiled files to
     "outputDir": "./dist",
-    "components": [
-        {
-            "name": "navigation",
-            "path": "./components/navigation.html"
-        },
-        {
-            "name": "header",
-            "path": "./components/header.html"
-        }
-    ]
+
+    // Location of your .html component files
+    "componentsDir": "./components"
 }
 ```
 
@@ -50,6 +46,8 @@ To use a define component use handlebars syntax like so:
 
 {{ header }}
 ```
+
+Where the string used between the `{{}}` is the base file name. For example the component file name `navigation.html` will available as `navigation`.
 
 When ready to compile your pages with the components run the braze command:
 

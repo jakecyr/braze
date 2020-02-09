@@ -26,12 +26,12 @@ Run the command:
 
 Start by creating a configuration file to tell braze where your components and HTML pages are.
 
-Make sure the `braze.json` file is in your project root.
+Make sure the `braze.js` file is in your project root.
 
-Example braze.json file: 
+Example braze.js file: 
 
 ```javascript
-{
+module.exports = {
     // Static HTML files that use your components
     "pagesDir": "./pages",
 
@@ -64,9 +64,9 @@ Where the string used between the `{{}}` is the base file name. For example the 
 
 Components support all [Handlebars](https://handlebarsjs.com/guide) syntax including loops. For example:
 
-**braze.json**
+**braze.js**
 ```javascript
-{
+module.exports = {
     "props": {
         "people": ["Sam", "John", "Alex"]
     }

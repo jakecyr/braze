@@ -3,6 +3,7 @@
 const { compile } = require('handlebars');
 const { exists } = require('fs');
 const minify = require('minify');
+const { resolve } = require('path');
 
 const {
     loadFile,
@@ -21,7 +22,8 @@ init();
  * Main entry point for the braze compilation
  */
 async function init() {
-    const config = await loadConfig();
+    const configFilePath = resolve('./braze.js');
+    const config = require(configFilePath);
     const { valid, errors } = validateConfig(config);
 
     if (valid) {
@@ -33,8 +35,8 @@ async function init() {
 }
 
 /**
- * Generate static files using the configuration params from the braze.json file
- * @param {object} config Parsed braze.json config file
+ * Generate static files using the configuration params from the braze.js file
+ * @param {object} config Parsed braze.js config file
  */
 function generateStaticFiles(config) {
     return new Promise(async (resolve, reject) => {
@@ -59,7 +61,7 @@ function generateStaticFiles(config) {
 
 /**
  * Compile the referenced file using the component context
- * @param {object} config Parsed braze.json config file
+ * @param {object} config Parsed braze.js config file
  * @param {string} filePath Path of the file to compile
  * @param {object} componentContext Loaded components with their contents
  */
@@ -124,7 +126,7 @@ function loadComponents(componentsDir) {
 
 /**
  * Validate the configuration file is valid
- * @param {object} config The entire parsed braze.json config object
+ * @param {object} config The entire parsed braze.js config object
  * @returns {boolean} Whether the config file is valid or not
  */
 function validateConfig(config) {
@@ -142,23 +144,4 @@ function validateConfig(config) {
         valid: errors.length == 0,
         errors,
     };
-}
-
-/**
- * Load the braze.json configuration file contents
- * @returns {Promise<object>} Resolves to the parsed braze.json file contents
- */
-function loadConfig() {
-    return new Promise((resolve, reject) => {
-        loadFile('./braze.json')
-            .then(fileData => {
-                try {
-                    const json = JSON.parse(fileData.toString());
-                    resolve(json);
-                } catch (e) {
-                    reject('Braze Error: Error parsing file, invalid braze.json');
-                }
-            })
-            .catch(() => reject('Braze Error: Error loading braze.json file'));
-    });
 }

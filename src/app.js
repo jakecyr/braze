@@ -16,6 +16,9 @@ init();
 
 ///////////////
 
+/**
+ * Main entry point for the braze compilation
+ */
 async function init() {
     const config = await loadConfig();
     const { valid, errors } = validateConfig(config);
@@ -27,35 +30,19 @@ async function init() {
         console.log(errors.join('\n'));
     }
 }
+
+/**
+ * Generate static files using the configuration params from the braze.json file
+ * @param {object} config Parsed braze.json config file
+ */
 function generateStaticFiles(config) {
     return new Promise(async (resolve, reject) => {
         const components = await loadComponents(config.componentsDir);
         const htmlFiles = await findFiles(config.pagesDir + '/**/*.html');
 
-        await setupOutputDirs(config.outputDir);
+        await setupOutputDirs(config.outputDir, true);
 
-        const promises = htmlFiles.map((file) => {
-            return new Promise(async (resolve, reject) => {
-                loadFile(file)
-                    .then((data) => {
-                        const template = compile(data, { noEscape: true });
-                        const compiledHtml = template(components);
-                        const newPath = sourceToDistPath(file, config.componentsDir, config.outputDir);
-                        const endDir = newPath.substring(0, newPath.lastIndexOf('/'));
-
-                        exists(endDir, async (exists) => {
-                            if (!exists) {
-                                await setupOutputDirs(endDir);
-                            }
-
-                            writeFile(newPath, compiledHtml)
-                                .then(resolve)
-                                .catch(reject);
-                        })
-                    })
-                    .catch(reject);
-            });
-        });
+        const promises = htmlFiles.map((file) => compileFile(config, file, components));
 
         Promise
             .all(promises)
@@ -63,6 +50,46 @@ function generateStaticFiles(config) {
             .catch(reject);
     });
 }
+
+/**
+ * Compile the referenced file using the component context
+ * @param {object} config Parsed braze.json config file
+ * @param {string} filePath Path of the file to compile
+ * @param {object} componentContext Loaded components with their contents
+ */
+function compileFile(config, filePath, componentContext) {
+    return new Promise(async (resolve, reject) => {
+        loadFile(filePath)
+            .then((fileContents) => {
+                const template = compile(fileContents, { noEscape: true });
+                const compiledHtml = template(componentContext);
+                const newPath = sourceToDistPath(filePath, config.componentsDir, config.outputDir);
+                const endDir = newPath.substring(0, newPath.lastIndexOf('/'));
+
+                exists(endDir, async (exists) => {
+                    let promise = null;
+
+                    if (!exists) {
+                        promise = setupOutputDirs(endDir, false);
+                    } else {
+                        promise = Promise.resolve();
+                    }
+
+                    await promise;
+
+                    writeFile(newPath, compiledHtml)
+                        .then(resolve)
+                        .catch(reject);
+                })
+            })
+            .catch(reject);
+    });
+}
+
+/**
+ * Load all component contents using the directory listed in the config file
+ * @param {string} componentsDir The directory to look for HTML components in
+ */
 function loadComponents(componentsDir) {
     return new Promise((resolve, reject) => {
         findFiles(componentsDir + '/**/*.html')
@@ -72,11 +99,8 @@ function loadComponents(componentsDir) {
                 const promises = components.map((path) => {
                     const promise = loadFile(path);
 
-                    promise.then(fileData => {
-
+                    promise.then((fileData) => {
                         const name = getNameFromFilePath(path);
-
-                        console.log(name);
 
                         loadedComponents[name] = fileData
                             .replace(/[\n]/, '')
@@ -94,6 +118,12 @@ function loadComponents(componentsDir) {
             .catch(reject);
     });
 }
+
+/**
+ * Validate the configuration file is valid
+ * @param {object} config The entire parsed braze.json config object
+ * @returns {boolean} Whether the config file is valid or not
+ */
 function validateConfig(config) {
     const errors = [];
 
@@ -105,19 +135,16 @@ function validateConfig(config) {
         errors.push('Braze Error: No outputDir property found in config');
     }
 
-    if (config.components) {
-        for (let component of config.components) {
-            if (!component.name || !component.path) {
-                errors.push('Braze Error: Component missing name or path property');
-            }
-        }
-    }
-
     return {
         valid: errors.length == 0,
         errors,
     };
 }
+
+/**
+ * Load the braze.json configuration file contents
+ * @returns {Promise<object>} Resolves to the parsed braze.json file contents
+ */
 function loadConfig() {
     return new Promise((resolve, reject) => {
         loadFile('./braze.json')

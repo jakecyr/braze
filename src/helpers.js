@@ -1,5 +1,6 @@
 const glob = require('glob');
 const { readFile, writeFile, mkdir, rmdir } = require('fs');
+const mkdirp = require('mkdirp');
 
 exports.loadFile = (filePath) => {
     return new Promise((resolve, reject) => {
@@ -58,10 +59,18 @@ exports.getNameFromFilePath = (filePath) => {
         .shift();
 };
 
-exports.setupOutputDirs = (outputDir) => {
-    return new Promise((resolve) => {
-        rmdir(outputDir, () => {
-            mkdir(outputDir, resolve);
-        });
+exports.setupOutputDirs = (outputDir, removeFirst = true) => {
+    return new Promise((resolve, reject) => {
+        if (removeFirst) {
+            rmdir(outputDir, () => {
+                mkdirp(outputDir)
+                    .then(resolve)
+                    .catch(reject);
+            });
+        } else {
+            mkdirp(outputDir)
+                .then(resolve)
+                .catch(reject);
+        }
     });
 };

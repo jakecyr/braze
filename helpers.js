@@ -1,5 +1,5 @@
 const glob = require('glob');
-const { readFile, writeFile, mkdir, rmdir } = require('fs');
+const { readFile, writeFile, rmdir } = require('fs');
 const mkdirp = require('mkdirp');
 
 exports.loadFile = (filePath) => {

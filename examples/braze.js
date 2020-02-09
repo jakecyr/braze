@@ -6,4 +6,7 @@ module.exports = {
         "people": ["John", "Sam", "Alex"],
     },
     minifyOutput: true,
+    helpers: {
+        ucase: (string) => string.toUpperCase(),
+    }
 };

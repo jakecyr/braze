@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-const { compile } = require('handlebars');
+const handlebars = require('handlebars');
 const { exists } = require('fs');
 const minify = require('minify');
 const { resolve } = require('path');
@@ -48,6 +48,8 @@ function generateStaticFiles(config) {
             ...(config.props || {}),
         };
 
+        addHelpers(config.helpers);
+
         await setupOutputDirs(config.outputDir, true);
 
         const promises = htmlFiles.map((file) => compileFile(config, file, context));
@@ -60,6 +62,18 @@ function generateStaticFiles(config) {
 }
 
 /**
+ * Add all helpers to the handlebars object
+ * @param {object} helpers Object of key / value (name / helper functions) from the config file
+ */
+function addHelpers(helpers) {
+    if (helpers) {
+        for (const key in helpers) {
+            handlebars.registerHelper(key, helpers[key]);
+        }
+    }
+}
+
+/**
  * Compile the referenced file using the component context
  * @param {object} config Parsed braze.js config file
  * @param {string} filePath Path of the file to compile
@@ -68,7 +82,7 @@ function generateStaticFiles(config) {
 function compileFile(config, filePath, componentContext) {
     return new Promise(async (resolve, reject) => {
         let fileContents = await (config.minifyOutput ? minify : loadFile)(filePath);
-        const template = compile(fileContents, { noEscape: true });
+        const template = handlebars.compile(fileContents, { noEscape: true });
         const compiledHtml = template(componentContext);
         const newPath = sourceToDistPath(filePath, config.pagesDir, config.outputDir);
         const endDir = newPath.substring(0, newPath.lastIndexOf('/'));

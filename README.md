@@ -33,21 +33,25 @@ Example braze.js file:
 ```javascript
 module.exports = {
     // Static HTML files that use your components
-    "pagesDir": "./pages",
+    pagesDir: "./pages",
 
     // Directory to output compiled files to
-    "outputDir": "./dist",
+    outputDir: "./dist",
 
     // Location of your .html component files (optional)
-    "componentsDir": "./components",
+    componentsDir: "./components",
 
     // optional additonal properties to use in context when compiling
-    "props": {
+    props: {
         "appTitle": "The best app"
     },
 
     // if you want the output to be minified or not
-    "minifyOutput": true
+    minifyOutput: true,
+
+    helpers: {
+        ucase: (string) => string.toUpperCase(),
+    },
 }
 ```
 
@@ -101,3 +105,25 @@ Or create a package.json script (if installed at project level):
 ```
 
 and run the command `npm run build`.
+
+
+### Using Helpers
+
+To use helper functions in your HTML pages, define functions in your braze.js file like so:
+
+```javascript
+{
+    props: {
+        name: 'John',
+    },
+    helpers: {
+        ucase: (string) => string.toUpperCase(),
+    }
+}
+```
+
+and in your HTML:
+
+```html
+{{ ucase name }}
+```

@@ -1,3 +1,5 @@
+![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.1.1&x2=0)
+
 # Braze
 
 Orchestrator of re-useable HTML components to generate a static site without having to rewrite common code.

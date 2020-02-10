@@ -5,7 +5,8 @@
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
-        "braze": "node app.js"
+        "braze": "node app.js",
+        "publish": "npm version $1 && npm pack && npm publish && rm braze*.tgz"
     },
     "bin": {
         "braze": "app.js"

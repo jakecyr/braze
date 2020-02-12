@@ -106,6 +106,9 @@ Or create a package.json script (if installed at project level):
 
 and run the command `npm run build`.
 
+### Watching for Changes
+
+Use the command `braze watch` in the project directory to watch the source files and re-build on detected change.
 
 ### Using Helpers
 

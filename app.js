@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 const handlebars = require('handlebars');
-const { exists } = require('fs');
+const { exists, watch } = require('fs');
 const minify = require('minify');
 const { resolve } = require('path');
 
@@ -36,10 +36,26 @@ function init() {
             case 'init':
                 initBrazeConfig();
                 break;
+            case 'watch':
+                watchSourceDir();
+                break;
             default:
                 console.error('Missing command');
         }
     }
+}
+
+async function watchSourceDir() {
+    const configFilePath = resolve('./braze.js');
+    const config = require(configFilePath);
+
+    await build();
+
+    watch(config.pagesDir, { recursive: true }, (event, file) => {
+        updateSingleFile(config, config.pagesDir + '/' + file)
+            .then(() => console.log(`Updated ${file}`))
+            .catch((err) => console.error(err));
+    });
 }
 
 async function initBrazeConfig() {
@@ -135,6 +151,23 @@ function generateStaticFiles(config) {
 
         Promise
             .all(promises)
+            .then(resolve)
+            .catch(reject);
+    });
+}
+
+function updateSingleFile(config, filePath) {
+    return new Promise(async (resolve, reject) => {
+        const components = await loadComponents(config.componentsDir);
+
+        const context = {
+            ...(components || {}),
+            ...(config.props || {}),
+        };
+
+        addHelpers(config.helpers);
+
+        compileFile(config, filePath, context)
             .then(resolve)
             .catch(reject);
     });

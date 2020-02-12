@@ -6,7 +6,8 @@
     "scripts": {
         "start": "node app.js",
         "braze": "node app.js",
-        "publish": "npm version $1 && npm pack && npm publish && rm braze*.tgz"
+        "publish": "npm version $1 && npm pack && npm publish && rm braze*.tgz",
+        "lint": "eslint app.js helpers.js"
     },
     "bin": {
         "braze": "app.js"
@@ -26,5 +27,9 @@
         "handlebars": "^4.7.3",
         "minify": "^5.1.0",
         "mkdirp": "^1.0.3"
+    },
+    "devDependencies": {
+        "eslint": "^6.8.0",
+        "eslint-config-google": "^0.14.0"
     }
 }

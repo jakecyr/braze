@@ -17,10 +17,9 @@ const {
 
 init();
 
-///////////////
-
 /**
  * Main entry point for the braze compilation
+ * @return {void}
  */
 async function init() {
     const configFilePath = resolve('./braze.js');
@@ -29,52 +28,63 @@ async function init() {
 
     if (valid) {
         await generateStaticFiles(config);
-        await moveOtherFiles(config);
+        await moveSecondaryFiles(config);
         console.log('Braze Finished Compiling');
     } else {
         console.log(errors.join('\n'));
     }
 }
 
-function moveOtherFiles(config) {
-    return new Promise((resolve, reject) => {
-        findFiles(`${config.pagesDir}/**/*`, { ignore: config.pagesDir + '/**/*.html' })
-            .then(async (results) => {
-                const directories = [];
-                const files = [];
+/**
+ * Move secondary (non-HTML) files to the output directory
+ * @param {object} config braze.js config file
+ * @return {Promise<void>}
+ */
+function moveSecondaryFiles(config) {
+    return new Promise(async (resolve, reject) => {
+        const results = await findFiles(`${config.pagesDir}/**/*`, {
+            ignore: config.pagesDir + '/**/*.html',
+        });
 
-                results
-                    .filter((file) => file.slice(file.lastIndexOf('/') + 1).includes('.'))
-                    .forEach((file) => {
-                        const dir = sourceToDistPath(file.slice(0, file.lastIndexOf('/')), config.pagesDir, config.outputDir);
+        const directories = [];
+        const files = [];
 
-                        directories.push(dir);
-
-                        files.push({
-                            source: file,
-                            output: sourceToDistPath(file, config.pagesDir, config.outputDir),
-                        });
-                    });
-
-                const dirPromises = directories
-                    .sort((a, b) => a.localeCompare(b))
-                    .map(directory => setupOutputDirs(directory, false));
-
-                await Promise.all(dirPromises);
-
-                const filePromises = files.map(file => copyFile(file.source, file.output));
-
-                await Promise.all(filePromises);
-
-                resolve();
+        results
+            .filter((file) => {
+                return file
+                    .slice(file.lastIndexOf('/') + 1)
+                    .includes('.');
             })
-            .catch(reject);
+            .forEach((file) => {
+                const dirPath = file.slice(0, file.lastIndexOf('/'));
+                const newDir = sourceToDistPath(dirPath, config.pagesDir, config.outputDir);
+
+                directories.push(newDir);
+
+                files.push({
+                    source: file,
+                    output: sourceToDistPath(file, config.pagesDir, config.outputDir),
+                });
+            });
+
+        const dirPromises = directories
+            .sort((a, b) => a.localeCompare(b))
+            .map((directory) => setupOutputDirs(directory, false));
+
+        await Promise.all(dirPromises);
+
+        const filePromises = files.map((file) => copyFile(file.source, file.output));
+
+        await Promise.all(filePromises);
+
+        resolve();
     });
 }
 
 /**
  * Generate static files using the configuration params from the braze.js file
  * @param {object} config Parsed braze.js config file
+ * @return {Promise<void>}
  */
 function generateStaticFiles(config) {
     return new Promise(async (resolve, reject) => {
@@ -102,11 +112,14 @@ function generateStaticFiles(config) {
 /**
  * Add all helpers to the handlebars object
  * @param {object} helpers Object of key / value (name / helper functions) from the config file
+ * @return {void}
  */
 function addHelpers(helpers) {
     if (helpers) {
         for (const key in helpers) {
-            handlebars.registerHelper(key, helpers[key]);
+            if (helpers.hasOwnProperty(key)) {
+                handlebars.registerHelper(key, helpers[key]);
+            }
         }
     }
 }
@@ -116,10 +129,11 @@ function addHelpers(helpers) {
  * @param {object} config Parsed braze.js config file
  * @param {string} filePath Path of the file to compile
  * @param {object} componentContext Loaded components with their contents
+ * @return {void}
  */
 function compileFile(config, filePath, componentContext) {
     return new Promise(async (resolve, reject) => {
-        let fileContents = await (config.minifyOutput ? minify : loadFile)(filePath);
+        const fileContents = await (config.minifyOutput ? minify : loadFile)(filePath);
         const template = handlebars.compile(fileContents, { noEscape: true });
         const compiledHtml = template(componentContext);
         const newPath = sourceToDistPath(filePath, config.pagesDir, config.outputDir);
@@ -146,6 +160,7 @@ function compileFile(config, filePath, componentContext) {
 /**
  * Load all component contents using the directory listed in the config file
  * @param {string} componentsDir The directory to look for HTML components in
+ * @return {Promise<object>}
  */
 function loadComponents(componentsDir) {
     return new Promise((resolve, reject) => {
@@ -179,7 +194,7 @@ function loadComponents(componentsDir) {
 /**
  * Validate the configuration file is valid
  * @param {object} config The entire parsed braze.js config object
- * @returns {boolean} Whether the config file is valid or not
+ * @return {boolean} Whether the config file is valid or not
  */
 function validateConfig(config) {
     const errors = [];

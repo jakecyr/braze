@@ -1,12 +1,11 @@
 {
     "name": "braze",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "description": "Static site generator with the ability to re-use common HTML components throughout your pages",
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
         "braze": "node app.js",
-        "publish": "npm version $1 && npm pack && npm publish && rm braze*.tgz",
         "lint": "eslint app.js helpers.js"
     },
     "bin": {

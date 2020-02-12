@@ -17,6 +17,14 @@
     "rules": {
         "indent": [2, 4],
         "object-curly-spacing": [0],
-        "max-len": [2, 100]
+        "max-len": [2, 100],
+        "no-await-in-loop": [2],
+        "no-dupe-else-if": [2],
+        "no-dupe-keys": [2],
+        "no-empty": [2],
+        "complexity": [2, 5],
+        "consistent-return": [2],
+        "no-return-await": [2],
+        "no-unused-vars": [2]
     }
 }

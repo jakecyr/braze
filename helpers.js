@@ -9,9 +9,7 @@ const mkdirp = require('mkdirp');
  * @return {Promise<void>}
  */
 exports.copyFile = (from, to) => {
-    return new Promise((resolve) => {
-        copyFile(from, to, resolve);
-    });
+    return new Promise((resolve) => copyFile(from, to, resolve));
 };
 
 /**

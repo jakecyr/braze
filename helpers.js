@@ -1,6 +1,12 @@
 const glob = require('glob');
-const { readFile, writeFile, rmdir } = require('fs');
+const { readFile, writeFile, rmdir, copyFile } = require('fs');
 const mkdirp = require('mkdirp');
+
+exports.copyFile = (from, to) => {
+    return new Promise((resolve) => {
+        copyFile(from, to, resolve);
+    });
+};
 
 exports.loadFile = (filePath) => {
     return new Promise((resolve, reject) => {
@@ -36,9 +42,9 @@ exports.sourceToDistPath = (filePath, sourcePath, distPath) => {
     return basePath;
 };
 
-exports.findFiles = (searchExpression) => {
+exports.findFiles = (searchExpression, extra = {}) => {
     return new Promise((resolve, reject) => {
-        glob(searchExpression, (err, matches) => {
+        glob(searchExpression, extra, (err, matches) => {
             if (err) {
                 reject(err);
             } else {

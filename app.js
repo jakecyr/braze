@@ -12,6 +12,7 @@ const {
     findFiles,
     getNameFromFilePath,
     setupOutputDirs,
+    copyFile,
 } = require('./helpers');
 
 init();
@@ -28,10 +29,47 @@ async function init() {
 
     if (valid) {
         await generateStaticFiles(config);
-        console.log('Braze Finished Compiling')
+        await moveOtherFiles(config);
+        console.log('Braze Finished Compiling');
     } else {
         console.log(errors.join('\n'));
     }
+}
+
+function moveOtherFiles(config) {
+    return new Promise((resolve, reject) => {
+        findFiles(`${config.pagesDir}/**/*`, { ignore: config.pagesDir + '/**/*.html' })
+            .then(async (results) => {
+                const directories = [];
+                const files = [];
+
+                results
+                    .filter((file) => file.slice(file.lastIndexOf('/') + 1).includes('.'))
+                    .forEach((file) => {
+                        const dir = sourceToDistPath(file.slice(0, file.lastIndexOf('/')), config.pagesDir, config.outputDir);
+
+                        directories.push(dir);
+
+                        files.push({
+                            source: file,
+                            output: sourceToDistPath(file, config.pagesDir, config.outputDir),
+                        });
+                    });
+
+                const dirPromises = directories
+                    .sort((a, b) => a.localeCompare(b))
+                    .map(directory => setupOutputDirs(directory, false));
+
+                await Promise.all(dirPromises);
+
+                const filePromises = files.map(file => copyFile(file.source, file.output));
+
+                await Promise.all(filePromises);
+
+                resolve();
+            })
+            .catch(reject);
+    });
 }
 
 /**

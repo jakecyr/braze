@@ -21,7 +21,38 @@ init();
  * Main entry point for the braze compilation
  * @return {void}
  */
-async function init() {
+function init() {
+    const args = process.argv.slice(2);
+
+    if (args.length == 0) {
+        console.error('No command specified');
+    } else {
+        const command = args.shift();
+
+        switch (command) {
+            case 'build':
+                build();
+                break;
+            case 'init':
+                initBrazeConfig();
+                break;
+            default:
+                console.error('Missing command');
+        }
+    }
+}
+
+async function initBrazeConfig() {
+    await writeFile(resolve('./braze.js'), 'module.exports = ' + JSON.stringify({
+        pagesDir: './pages',
+        outputDir: './dist',
+        componentsDir: './components',
+        props: {},
+        minifyOutput: true,
+    }, null, 4));
+}
+
+async function build() {
     const configFilePath = resolve('./braze.js');
     const config = require(configFilePath);
     const { valid, errors } = validateConfig(config);

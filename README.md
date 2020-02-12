@@ -24,7 +24,7 @@ Run the command:
 
 ### Configuration File
 
-Start by creating a configuration file to tell braze where your components and HTML pages are.
+Start by creating a configuration file to tell braze where your components and HTML pages are. The command `braze init` (global) or `npx braze init` (one-time run) can be used to generate a generic braze config file in the current directory.
 
 Make sure the `braze.js` file is in your project root.
 
@@ -90,7 +90,7 @@ module.exports = {
 
 When ready to compile your pages with the components run the braze command (if installed globally):
 
-`braze`
+`braze build`
 
 Or create a package.json script (if installed at project level):
 
@@ -99,7 +99,7 @@ Or create a package.json script (if installed at project level):
     "name": "my-project",
     "scripts": {
         "start": "node app.js",
-        "build": "braze"
+        "build": "braze build"
     }
 }
 ```

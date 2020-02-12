@@ -2,7 +2,7 @@
     "name": "braze-example",
     "version": "1.0.0",
     "scripts": {
-        "build": "braze"
+        "build": "braze build"
     },
     "author": "Jake Cyr",
     "license": "ISC"

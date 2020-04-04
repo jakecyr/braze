@@ -1,6 +1,6 @@
 {
     "name": "braze",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Static site generator with the ability to re-use common HTML components throughout your pages",
     "keywords": [
         "static",
@@ -30,7 +30,7 @@
     "homepage": "https://github.com/jakecyr/braze#readme",
     "dependencies": {
         "glob": "^7.1.6",
-        "handlebars": "^4.7.3",
+        "handlebars": "^4.7.6",
         "minify": "^5.1.0",
         "mkdirp": "^1.0.3"
     },

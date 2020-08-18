@@ -49,13 +49,24 @@ async function watchSourceDir() {
     const configFilePath = resolve('./braze.js');
     const config = require(configFilePath);
 
+    const pagesDir = config.pagesDir;
+    const componentsDir = config.componentsDir;
+
     await build();
 
-    watch(config.pagesDir, { recursive: true }, (event, file) => {
-        updateSingleFile(config, config.pagesDir + '/' + file)
-            .then(() => console.log(`Updated ${file}`))
-            .catch((err) => console.error(err));
-    });
+    if (pagesDir) {
+        watch(pagesDir, { recursive: true }, (event, file) => {
+            updateSingleFile(config, pagesDir + '/' + file)
+                .then(() => console.log(`Updated ${file}`))
+                .catch((err) => console.error(err));
+        });
+    }
+
+    if (componentsDir) {
+        watch(componentsDir, { recursive: true }, (event, file) => {
+            build();
+        });
+    }
 }
 
 async function initBrazeConfig() {
@@ -233,7 +244,7 @@ function loadComponents(componentsDir) {
                 const loadedComponents = {};
 
                 const promises = components.map((path) => {
-                    const promise = loadFile(path);
+                    const promise = minify(path);
 
                     promise.then((fileData) => {
                         const name = getNameFromFilePath(path);

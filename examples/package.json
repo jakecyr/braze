@@ -2,8 +2,8 @@
     "name": "braze-example",
     "version": "1.0.0",
     "scripts": {
-        "build": "braze build",
-        "watch": "braze watch"
+        "build": "node ../app.js build",
+        "watch": "node ../app.js watch"
     },
     "author": "Jake Cyr",
     "license": "ISC"
